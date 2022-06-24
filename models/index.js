@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const mongoose = require('mongoose')
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/mernAuth'
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/proj3'
 
 mongoose.connect(MONGODB_URI)
 
@@ -18,5 +18,7 @@ db.on('error', err => {
 
 module.exports = {
     // export db models 
-    User: require('./user')
+    Account: require('./account'),
+    Profile: require('./profile'),
+    Task: require('./task')
 }
