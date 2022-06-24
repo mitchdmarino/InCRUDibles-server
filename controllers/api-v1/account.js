@@ -4,36 +4,37 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const authLockedRoute = require('./authLockedRoute')
 
-// POST /users/register -- CREATE a new user 
+
+// POST /accounts/register -- CREATE a new account 
 router.post('/register', async (req, res) => {
     try {
-        /// check if the user exists already 
-        const findUser = await db.User.findOne({
+        /// check if the account exists already 
+        const findAccount = await db.Account.findOne({
             email: req.body.email
         })
 
-        // disallow users from registerring twice
-        if (findUser) {
+        // disallow accounts from registerring twice
+        if (findAccount) {
             return res.status(400).json({ msg: 'email exists already' })
         }
-        // hash the user's password
+        // hash the account's password
         const password = req.body.password
         const saltRounds = 12
         const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-        //create a new user with the hashed password 
-        const newUser = new db.User({
+        //create a new account with the hashed password 
+        const newAccount = new db.Account({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
         })
-        await newUser.save()
-        // sign the user in 
+        await newAccount.save()
+        // sign the account in 
         // create the jwt payload
         const payload = {
-            name: newUser.name,
-            email: newUser.email,
-            id: newUser.id
+            name: newAccount.name,
+            email: newAccount.email,
+            id: newAccount.id
         }
         // sign the token and send it back 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 24 }) // expires in one day
@@ -52,33 +53,33 @@ router.post('/register', async (req, res) => {
     }
 })
 
-// POST /users/login -- validate the login credentials
+// POST /accounts/login -- validate the login credentials
 router.post('/login', async (req, res) => {
     try {
         // all the data will come in on the req.body
         console.log(req.body)
-        // try to find the user in the database 
-        const findUser = await db.User.findOne({
+        // try to find the account in the database 
+        const findAccount = await db.Account.findOne({
             email: req.body.email
         })
 
-        // if the user is not found, send a status of 400 and let the user know login failed 
-        if (!findUser) {
+        // if the account is not found, send a status of 400 and let the account know login failed 
+        if (!findAccount) {
             return res.status(400).json({ msg: 'Invalid Login' })
         }
-        // console.log(findUser)
+        // console.log(findaccount)
         // Check if the supplied password matches the hash in the db 
-        const passwordCheck = await bcrypt.compare(req.body.password, findUser.password )
+        const passwordCheck = await bcrypt.compare(req.body.password, findAccount.password )
         // console.log(passwordCheck)
-        // if they do not match, return and let the user know that login has failed 
+        // if they do not match, return and let the account know that login has failed 
         if (!passwordCheck) {
             return res.status(400).json({msg: 'Invalid Login '})
         }
         // Create a jwt payload 
         const payload = {
-            name: findUser.name,
-            email: findUser.email,
-            id: findUser.id
+            name: findAccount.name,
+            email: findAccount.email,
+            id: findAccount.id
         } 
         // sign the jwt and send it back 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 24 }) // expires in one day
@@ -89,11 +90,22 @@ router.post('/login', async (req, res) => {
     }
 })
 
-// GET /auth-locked -- checks users credentials and only sends back privilaged information if user is logged in properly
+// GET /auth-locked -- checks accounts credentials and only sends back privilaged information if account is logged in properly
 router.get('/auth-locked', authLockedRoute, (req, res) => {
-    console.log('the current user is ', res.locals.user)
+    console.log('the current account is ', res.locals.account)
     res.json({ msg: 'welcome to the secret auth-locked route 🕵🏻‍♂️' })
     
+})
+
+router.get('/:id', authLockedRoute, async (req,res) => {
+    try {
+        console.log(req.params.id)
+        const account = await db.Account.findById(req.params.id).populate('tasks').populate('profiles')
+        res.json(account)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({msg: 'server error'})
+    }
 })
 
 module.exports = router 
