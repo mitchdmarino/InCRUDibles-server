@@ -33,6 +33,7 @@ app.get('/', myMiddleware, (req, res) => {
 
 app.use('/api-v1/account', require('./controllers/api-v1/account'))
 app.use('/api-v1/profile', require('./controllers/api-v1/profile'))
+app.use('/api-v1/tasks', require('./controllers/api-v1/tasks'))
 
 
 // listen on a port 

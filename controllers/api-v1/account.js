@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
             id: newAccount.id
         }
         // sign the token and send it back 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 24 }) // expires in one day
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' }) // expires in one day
         res.json({ token })
     } catch (err) {
         console.warn(err)
@@ -82,7 +82,7 @@ router.post('/login', async (req, res) => {
             id: findAccount.id
         } 
         // sign the jwt and send it back 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 24 }) // expires in one day
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' }) // expires in one day
         res.json({ token })
        
     } catch (err) {
@@ -107,5 +107,7 @@ router.get('/:id', authLockedRoute, async (req,res) => {
         res.status(500).json({msg: 'server error'})
     }
 })
+
+
 
 module.exports = router 
