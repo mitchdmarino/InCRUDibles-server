@@ -9,15 +9,14 @@ router.post('/', authLockedRoute, async (req,res) => {
         // find the account that is signed in
         const account = res.locals.account
         // create a new profile based on the req.body
-        const newProfile = await db.Profile.create({
-            name: req.body.name
-        })
+        const newProfile = await db.Profile.create(req.body)
         // add the newprofile to the account 
         account.profiles.push(newProfile)
         // save 
         await account.save()
         await newProfile.save()
-        res.json(account)
+        const response = await account.populate('profiles')
+        res.json(response)
     } catch (err) {
         console.warn(err)
         res.status(500).json({msg: 'server error'})
@@ -30,7 +29,9 @@ router.put('/:id', authLockedRoute, async (req,res) => {
         const options = {new: true}
         // find the profile 
         const profile = await db.Profile.findByIdAndUpdate(id, req.body, options)
-        res.json(profile)
+        const account = res.locals.account
+        const response = await account.populate('profiles')
+        res.json(response)
         
     } catch (err) {
         console.warn(err)
@@ -43,7 +44,9 @@ router.delete('/:id', authLockedRoute, async (req,res) => {
         const id = req.params.id
         await db.Profile.findByIdAndDelete(id)
         // no content status
-        res.sendStatus(204)
+        const account = res.locals.account
+        const response = await account.populate('profiles')
+        res.json(response)
     } catch (err) {
         console.warn(err)
         res.status(500).json({msg: 'server error'})
