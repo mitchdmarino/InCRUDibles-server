@@ -21,6 +21,18 @@ router.post('/', authLockedRoute, async (req,res) => {
     }
 })
 
+router.post('/:taskId/profile/:profileId', authLockedRoute, async (req,res) => {
+    try {
+        const profile = await db.Profile.findById(req.params.profileId)
+        const task = await db.Task.findById(req.params.taskId)
+
+        task.profile = profile
+        await task.save()
+    } catch (error) {
+        
+    }
+})
+
 router.put('/:id', async (req,res) => {
     try {
         const id = req.params.id
