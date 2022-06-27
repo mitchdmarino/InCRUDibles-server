@@ -13,7 +13,8 @@ router.post('/', authLockedRoute, async (req,res) => {
         // save 
         await account.save()
         await newTask.save()
-        res.json(account)
+        const response = await account.populate('tasks')
+        res.json(response)
     } catch (err) {
         console.warn(err)
         res.status(500).json({msg: 'server error'})
