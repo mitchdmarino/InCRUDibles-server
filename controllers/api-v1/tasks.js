@@ -13,7 +13,7 @@ router.post("/", authLockedRoute, async (req, res) => {
     // save
     await account.save();
     await newTask.save();
-    const response = await account.populate("tasks");
+    const response = await account.populate({path: 'tasks', populate: {path: 'profile'}});
     res.json(response);
   } catch (err) {
     console.warn(err);

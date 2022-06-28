@@ -104,7 +104,7 @@ router.get("/:id", authLockedRoute, async (req, res) => {
   try {
     console.log(req.params.id);
     const account = await db.Account.findById(req.params.id)
-      .populate("tasks")
+      .populate({path: 'tasks', populate: {path: 'profile'}})
       .populate("profiles");
     res.json(account);
   } catch (err) {
