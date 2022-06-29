@@ -50,7 +50,7 @@ router.get("/", authLockedRoute, async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authLockedRoute ,async (req, res) => {
   try {
     const id = req.params.id;
     const options = { new: true };
@@ -63,7 +63,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authLockedRoute ,async (req, res) => {
   try {
     const id = req.params.id;
     await db.Task.findByIdAndDelete(id);
