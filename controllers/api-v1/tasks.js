@@ -4,13 +4,13 @@ const authLockedRoute = require("./authLockedRoute");
 
 router.post("/", authLockedRoute, async (req, res) => {
   try {
-    // find the account that is signed in
+    // The account that is signed is searched for.
     const account = res.locals.account;
-    // create a new task based on the req.body
+    // A new task is created based on the req.body.
     const newTask = await db.Task.create(req.body);
-    // add the newtask to the account
+    // A new task is added to the account.
     account.tasks.push(newTask);
-    // save
+    // The task is saved.
     await account.save();
     await newTask.save();
     const response = await account.populate({path: 'tasks', populate: {path: 'profile'}});
@@ -44,17 +44,17 @@ router.get("/", authLockedRoute, async (req, res) => {
       account: account._id,
     }).populate("profile");
     res.json(tasks);
-    console.log(tasks, "asdf");
   } catch (err) {
     console.warn(err);
   }
 });
 
+// Update a task.
 router.put("/:id", authLockedRoute ,async (req, res) => {
   try {
     const id = req.params.id;
     const options = { new: true };
-    // find the task
+    // The task is searched for.
     const task = await db.Task.findByIdAndUpdate(id, req.body, options);
     res.json(task);
   } catch (err) {
@@ -63,11 +63,11 @@ router.put("/:id", authLockedRoute ,async (req, res) => {
   }
 });
 
+// Delete a task.
 router.delete("/:id", authLockedRoute ,async (req, res) => {
   try {
     const id = req.params.id;
     await db.Task.findByIdAndDelete(id);
-    // no content status
     res.sendStatus(204);
   } catch (err) {
     console.warn(err);

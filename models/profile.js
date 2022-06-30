@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
-// Profile Schema 
-
+// The Profile Schema 
 const ProfileSchema = new mongoose.Schema({
     name: {
         type: String,
