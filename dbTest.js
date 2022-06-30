@@ -1,6 +1,6 @@
 const db = require('./models')
 
-// testing user CREATE 
+// Testing the ability to create an account. 
 
 db.Account.create({
     name: 'First Account', 
@@ -14,16 +14,16 @@ db.Account.create({
 
 
 const addProfile = async () => {
-    // find the account
+    // An account is searched for.
     const account = await db.Account.findOne({email:'firs@account.com'})
     console.log(account)
-    // create a new profile
+    // A new profile is created.
     const newProfile = await db.Profile.create({
         name: '2'
     })
-    // Add the 
+    // The profile is added.
     account.profiles.push(newProfile)
-    // save 
+    // The account and new profile that belongs to it are saved. 
     await account.save()
     await newProfile.save()
     console.log(account)
@@ -32,15 +32,15 @@ const addProfile = async () => {
 addProfile()
 
 const addTask = async () => {
-    // find the account
+    // The account is searched for.
     const account = await db.Account.findOne({email:'firs@account.com'})
     console.log(account)
-    // create a new Task
+    // A new task is created.
     const newTask = await db.Task.create({
         description: 'new Task',
         completed: false
     })
-    // Add the 
+    // The task is added to the account.
     account.tasks.push(newTask)
     // save 
     await account.save()
@@ -50,20 +50,16 @@ const addTask = async () => {
 
 addTask()
 
-// completing a task 
-
 const completeTask = async () => {
-    // find the Task 
+    // A task is searched for. 
     const task = await db.Task.findById('62b5ee14467063340369091d')
-    // task completed 
+    // The task is completed.
     task.completed = true 
 
-    // find the profile
+    // The profile that completed the task is searched for and it is saved.
     const profile = await db.Profile.findById('62b5edf5039e050bad0a78d1')
-    console.log(profile)
     task.profile = profile
     task.save()
-    console.log(task)
 }
 
 completeTask()

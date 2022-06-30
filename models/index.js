@@ -17,7 +17,7 @@ db.on('error', err => {
 })
 
 module.exports = {
-    // export db models 
+    // Export DB models.
     Account: require('./account'),
     Profile: require('./profile'),
     Task: require('./task')
